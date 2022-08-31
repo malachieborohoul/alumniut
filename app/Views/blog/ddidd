@@ -1,0 +1,85 @@
+/**
+ * Récuperer tous les commentaires par rapport à cet articles
+ *
+ * @return void
+ */
+ function getAllComments()
+ {
+   
+  var id=<?=$id?>;
+
+   $.ajax({
+    method: "post",
+     url: "<?=base_url()?>/public/blog/getAllComments",
+     data: {"id":id},
+     dataType: "json",
+     success: function (response) {
+       console.log(response.comment);
+       var html='';
+       var nbrComment=response.nombre;
+       /**
+        * Si le champ vuReponse de la table commentaire est à 0 
+        * alors il faudrait afficher les différentes reponse d'un commentaire
+        * Nous faisons cela parcequ'apres chaque 5 secondes les commentaires
+        * sont actualisés et par conséquent ca revient toujours à l'état initial 
+        * donc il faudrait s'assurer que soit le user a cliquer pour afficher
+        * les reponses ou soit pour les masquer
+        */
+       var bouttonAfficherReponse='\
+       <button   class="afficherReponseCommentaire">Afficher</button></div>';
+      /**
+       * Ici il masque les reponses de commenntaires
+       */
+       var bouttonMasquerReponse=' \
+         <button   class="masquerReponseCommentaire">Masquer</button>\
+                  </div>\
+                  <ul class="children">\
+                      <li class="comment">\
+                        <ul class="children">\
+                          <li class="comment">\
+                            <div class="vcard bio">\
+                              <img src="images/teacher-1.jpg" alt="Image placeholder">\
+                            </div>\
+                            <div class="comment-body">\
+                              <h3>John Doe</h3>\
+                              <div class="meta mb-2">June 27, 2019 at 2:21pm</div>\
+                              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pmpedit necessitatibus, nihil?</p>\
+                              <div class="row">\
+                              <form action="" method="post">\
+                                <div><input type="text" id="msgReponse"></div>\
+                                <div "><button  class="text text-primary publierReponse">Publier</button></div>\
+                              </form>\
+                              </div>\
+                            </div>\
+                          </li>\
+                        </ul>\
+                      </li>\
+                    </ul>';
+       $.each(response.comment, function (index, value) { 
+        
+          html+=
+         '<ul class="comment-list comment">\
+              <li class="comment">\
+                  <div class="vcard bio">\
+                    <img src="'+value['photo']+'" alt="Image placeholder">\
+                  </div>\
+                  <div class="comment-body">\
+                    <h3>'+value['nom']+'</h3>\
+                    <div class="meta mb-2">'+value['commentcreated_at']+'</div>\
+                    <p>'+value['message']+'</p>\
+                    <p><button class="reply afficherReponseCommentaire">Repondre</button></p>\
+                    '+ (value['vuReponse']==0 ? bouttonAfficherReponse:bouttonMasquerReponse)+'\
+                    <p style="display:none" class="commentId">'+value['idComment']+'</p>\
+              </li>\
+            </ul>';
+       });
+       $(".nombreComment").html(nbrComment+' commentaires');
+       $('#comment').html(html)
+     
+        
+
+     }
+   });
+
+   
+ }

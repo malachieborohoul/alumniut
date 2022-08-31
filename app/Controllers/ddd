@@ -1,0 +1,67 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           else
+           {
+                
+                    // $this->userModel->add($data);
+                    // echo json_encode(['code'=>1, 'msg'=>'Yes']);
+                    $userdata = [
+                        'nom' => $this->request->getVar('nom', FILTER_SANITIZE_STRING),
+        
+                        'email' => $this->request->getVar('email', FILTER_SANITIZE_STRING),
+        
+                    ];
+        
+        
+                        $to = $this->request->getVar('email', FILTER_SANITIZE_STRING);
+                        $subject = "Activation d'un compte";
+                        $message = "Bonjour ". $this->request->getVar('nom', FILTER_SANITIZE_STRING)."</p>
+						<p>Cet accès à notre site vous permet notamment de :</p>
+						<p>- mettre à jour vos coordonnées personnelles et professionnelles en ligne,</p>
+						<p>- déposer vos offres d'emploi et de stage,</p>
+						<p>- suivre les actualités des membres,</p>
+						<p>- accéder aux offres d'emploi ,</p>
+						<p>- déposer votre CV pour être visible auprès des partenaires,</p>
+						<p>- vous inscrire aux évènements. </p>" ;
+        
+                        $this->email->setTo($to);
+                        $this->email->setFrom('bsm@gmail.com','ALUMNI IUT');
+                        $this->email->setSubject($subject);
+                        $this->email->setMessage($message);
+        
+                        if ($this->email->send()) {
+                            $status = $this->registerModel->saveUsers($userdata);
+                            if ($status) {
+                                echo json_encode(['code'=>1,'msg'=>"Inscription reussi. Nous vous contacterons pour la suite"]);
+
+        
+                           
+                            } else {
+                                echo json_encode(['code'=>0,'msg'=>"Une Erreur est survenue"]);
+
+
+                            }
+                        } else {
+                            echo json_encode(['code'=>0,'msg'=>"Une Erreur est survenue"]);
+
+                        }
+                
+               
+           }
